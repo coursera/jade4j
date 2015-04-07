@@ -1,7 +1,9 @@
 package de.neuland.jade4j.parser.node;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.neuland.jade4j.compiler.IndentWriter;
 import de.neuland.jade4j.exceptions.JadeCompilerException;
@@ -16,9 +18,10 @@ public abstract class Node implements Cloneable {
     protected String value;
     protected Node block;
     protected String fileName;
+    protected Map<String, String> translation = Collections.emptyMap();
 
     public abstract void execute(IndentWriter writer, JadeModel model, JadeTemplate template) throws JadeCompilerException;
-    
+
     public void setLineNumber(int lineNumber) {
         this.lineNumber = lineNumber;
     }
@@ -26,7 +29,7 @@ public abstract class Node implements Cloneable {
     public int getLineNumber() {
         return lineNumber;
     }
-    
+
     public void setValue(String value) {
         this.value = value;
     }
@@ -41,6 +44,14 @@ public abstract class Node implements Cloneable {
     
     public String getName() {
         return name;
+    }
+
+    public void setTranslation(Map<String, String> translation) {
+        this.translation = translation;
+    }
+
+    public Map<String, String> getTranslation() {
+        return translation;
     }
 
     public void push(Node node) {

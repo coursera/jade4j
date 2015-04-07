@@ -2,6 +2,7 @@ package de.neuland.jade4j.parser.node;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.neuland.jade4j.compiler.IndentWriter;
 import de.neuland.jade4j.compiler.Utils;
@@ -30,7 +31,11 @@ public class TextNode extends Node {
 	}
 
 	private void prepare() {
-		preparedValue = Utils.prepareInterpolate(value, false);
+        String translatedValue = value;
+        if (super.translation.containsKey(value)) {
+            translatedValue = super.getTranslation().get(value);
+        }
+		preparedValue = Utils.prepareInterpolate(translatedValue, false);
 	}
 
 	@Override

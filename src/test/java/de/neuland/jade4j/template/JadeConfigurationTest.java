@@ -6,9 +6,13 @@ import de.neuland.jade4j.parser.Parser;
 import de.neuland.jade4j.parser.node.Node;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.io.FileUtils;
 import static org.junit.Assert.*;
 
 public class JadeConfigurationTest {
@@ -21,6 +25,21 @@ public class JadeConfigurationTest {
     	JadeConfiguration config = new JadeConfiguration();
     	JadeTemplate template = config.getTemplate(getParserResourcePath("assignment"));
     	assertNotNull(template);
+    }
+
+    @Test
+    public void testGetTemplateWithTranslation() throws IOException {
+        JadeConfiguration config = new JadeConfiguration();
+        Map<String, String> translation = new HashMap<String, String>();
+        translation.put("Hello World!", "Hello world in other language");
+        translation.put("The quick brown fox", "Fox in other language");
+        translation.put("jumpes over the lazy dog", "dog in other language");
+        translation.put("hello", "hello in other language");
+        JadeTemplate template = config.getTemplate(getParserResourcePath("translate_text.jade"), "zh_cn", translation);
+        assertNotNull(template);
+        String html = config.renderTemplate(template, Collections.EMPTY_MAP);
+        String expected = readFile("translate_text.html");
+        assertEquals(expected, html);
     }
 
     @Test
@@ -69,5 +88,15 @@ public class JadeConfigurationTest {
 			e.printStackTrace();
 		}
     	return null;
+    }
+
+    private String readFile(String fileName) {
+        try {
+            return FileUtils.readFileToString(new File(TestFileHelper
+                    .getParserResourcePath(fileName)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

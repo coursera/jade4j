@@ -1,8 +1,15 @@
 package de.neuland.jade4j.parser;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import de.neuland.jade4j.parser.node.BlockNode;
+import de.neuland.jade4j.parser.node.TagNode;
 import org.junit.Assert;
+import org.junit.Test;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import de.neuland.jade4j.TestFileHelper;
 import de.neuland.jade4j.parser.node.Node;

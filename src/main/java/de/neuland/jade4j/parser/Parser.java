@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
@@ -78,8 +79,20 @@ public class Parser {
     private Parser extending;
     private final String filename;
     private LinkedList<Parser> contexts = new LinkedList<Parser>();
+    private String languageCode;
+    private Map<String, String> translation = Collections.EMPTY_MAP;
+
 
     public Parser(String filename, TemplateLoader templateLoader) throws IOException {
+        this.filename = filename;
+        this.templateLoader = templateLoader;
+        lexer = new Lexer(filename, templateLoader);
+        getContexts().push(this);
+    }
+
+    public Parser(String filename, TemplateLoader templateLoader, String languageCode, Map<String, String> translation) throws IOException {
+        this.languageCode = languageCode;
+        this.translation = translation;
         this.filename = filename;
         this.templateLoader = templateLoader;
         lexer = new Lexer(filename, templateLoader);
@@ -336,7 +349,7 @@ public class Parser {
     private Parser createParser(String templateName) {
         templateName = ensureJadeExtension(templateName);
         try {
-            return new Parser(resolvePath(templateName), templateLoader);
+            return new Parser(resolvePath(templateName), templateLoader, languageCode, translation);
         } catch (IOException e) {
             throw new JadeParserException(filename, lexer.getLineno(), templateLoader, "the template [" + templateName
                     + "] could not be opened\n" + e.getMessage());
@@ -418,6 +431,7 @@ public class Parser {
     private Node parseText() {
         Token token = expect(Text.class);
         Node node = new TextNode();
+        node.setTranslation(translation);
         node.setValue(token.getValue());
         node.setLineNumber(token.getLineNumber());
         node.setFileName(filename);
