@@ -32,8 +32,9 @@ public class TextNode extends Node {
 
 	private void prepare() {
         String translatedValue = value;
-        if (super.translation.containsKey(value)) {
-            translatedValue = super.getTranslation().get(value);
+        String trimValue = value.trim();
+        if (super.translation.containsKey(trimValue)) {
+            translatedValue = super.getTranslation().get(trimValue);
         }
 		preparedValue = Utils.prepareInterpolate(translatedValue, false);
 	}
