@@ -30,12 +30,12 @@ public class JadeConfigurationTest {
     @Test
     public void testGetTemplateWithTranslation() throws IOException {
         JadeConfiguration config = new JadeConfiguration();
-        Map<String, String> translation = new HashMap<String, String>();
-        translation.put("Hello World!", "Hello world in other language");
-        translation.put("The quick brown fox", "Fox in other language");
-        translation.put("jumpes over the lazy dog", "dog in other language");
-        translation.put("hello", "hello in other language");
-        JadeTemplate template = config.getTemplate(getParserResourcePath("translate_text.jade"), "zh_cn", translation);
+        Map<String, String> translations = new HashMap<String, String>();
+        translations.put("Hello World!", "Hello world in other language");
+        translations.put("The quick brown fox", "Fox in other language");
+        translations.put("jumpes over the lazy dog", "dog in other language");
+        translations.put("hello", "hello in other language");
+        JadeTemplate template = config.getTemplate(getParserResourcePath("translate_text.jade"), "zh_cn", translations);
         assertNotNull(template);
         String html = config.renderTemplate(template, Collections.EMPTY_MAP);
         String expected = readFile("translate_text.html");

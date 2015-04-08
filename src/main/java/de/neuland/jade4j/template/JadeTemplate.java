@@ -1,7 +1,6 @@
 package de.neuland.jade4j.template;
 
 import java.io.Writer;
-import java.util.Map;
 
 import de.neuland.jade4j.Jade4J.Mode;
 import de.neuland.jade4j.compiler.Compiler;

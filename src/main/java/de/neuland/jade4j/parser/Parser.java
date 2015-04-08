@@ -80,7 +80,7 @@ public class Parser {
     private final String filename;
     private LinkedList<Parser> contexts = new LinkedList<Parser>();
     private String languageCode;
-    private Map<String, String> translation = Collections.EMPTY_MAP;
+    private Map<String, String> originalToTranslated = Collections.EMPTY_MAP;
 
 
     public Parser(String filename, TemplateLoader templateLoader) throws IOException {
@@ -90,9 +90,9 @@ public class Parser {
         getContexts().push(this);
     }
 
-    public Parser(String filename, TemplateLoader templateLoader, String languageCode, Map<String, String> translation) throws IOException {
+    public Parser(String filename, TemplateLoader templateLoader, String languageCode, Map<String, String> originalToTranslated) throws IOException {
         this.languageCode = languageCode;
-        this.translation = translation;
+        this.originalToTranslated = originalToTranslated;
         this.filename = filename;
         this.templateLoader = templateLoader;
         lexer = new Lexer(filename, templateLoader);
@@ -349,7 +349,7 @@ public class Parser {
     private Parser createParser(String templateName) {
         templateName = ensureJadeExtension(templateName);
         try {
-            return new Parser(resolvePath(templateName), templateLoader, languageCode, translation);
+            return new Parser(resolvePath(templateName), templateLoader, languageCode, originalToTranslated);
         } catch (IOException e) {
             throw new JadeParserException(filename, lexer.getLineno(), templateLoader, "the template [" + templateName
                     + "] could not be opened\n" + e.getMessage());
@@ -431,7 +431,7 @@ public class Parser {
     private Node parseText() {
         Token token = expect(Text.class);
         Node node = new TextNode();
-        node.setTranslation(translation);
+        node.setTranslations(originalToTranslated);
         node.setValue(token.getValue());
         node.setLineNumber(token.getLineNumber());
         node.setFileName(filename);

@@ -18,7 +18,7 @@ public abstract class Node implements Cloneable {
     protected String value;
     protected Node block;
     protected String fileName;
-    protected Map<String, String> translation = Collections.emptyMap();
+    protected Map<String, String> originalToTranslated = Collections.emptyMap();
 
     public abstract void execute(IndentWriter writer, JadeModel model, JadeTemplate template) throws JadeCompilerException;
 
@@ -46,12 +46,12 @@ public abstract class Node implements Cloneable {
         return name;
     }
 
-    public void setTranslation(Map<String, String> translation) {
-        this.translation = translation;
+    public void setTranslations(Map<String, String> originalToTranslated) {
+        this.originalToTranslated = originalToTranslated;
     }
 
-    public Map<String, String> getTranslation() {
-        return translation;
+    public Map<String, String> getTranslations() {
+        return originalToTranslated;
     }
 
     public void push(Node node) {
