@@ -16,6 +16,7 @@ import de.neuland.jade4j.template.TemplateLoader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,22 +45,41 @@ public class JadeConfiguration {
             MAX_ENTRIES + 1).build();
 
     public JadeTemplate getTemplate(String name) throws IOException, JadeException {
+        return getTemplate(name, null, Collections.EMPTY_MAP);
+    }
+
+    /**
+     * @param name: template name
+     * @param languageCode: the language that provided template will be translated to. There is no restriction
+     *                    on how language code should look like since it is only used for differentiate templates on caching.
+     *                    Your code base should be consistent with the format of language code that is passed in to reduce the rendering
+     *                    speed.
+     * @param originalToTranslated: a mapping between original string to translated string.
+     * @return JadeTemplate
+     * @throws IOException
+     * @throws JadeException
+     */
+    public JadeTemplate getTemplate(String name, String languageCode, Map<String, String> originalToTranslated) throws IOException, JadeException {
         if (caching) {
             long lastModified = templateLoader.getLastModified(name);
-            String key = name + "-" + lastModified;
-
+            String key;
+            if (languageCode != null) {
+                key = name + "-" + languageCode + "-" + lastModified;
+            } else {
+                key = name + "--" + lastModified;
+            }
             JadeTemplate template = cache.get(key);
 
             if (template != null) {
                 return template;
             } else {
-                JadeTemplate newTemplate = createTemplate(name);
+                JadeTemplate newTemplate = createTemplate(name, languageCode, originalToTranslated);
                 cache.put(key, newTemplate);
                 return newTemplate;
             }
         }
 
-        return createTemplate(name);
+        return createTemplate(name, languageCode, originalToTranslated);
     }
 
     public void renderTemplate(JadeTemplate template, Map<String, Object> model, Writer writer) throws JadeCompilerException {
@@ -77,10 +97,10 @@ public class JadeConfiguration {
         return writer.toString();
     }
 
-    private JadeTemplate createTemplate(String name) throws JadeException, IOException {
+    private JadeTemplate createTemplate(String name, String languageCode, Map<String, String> originalToTranslated) throws JadeException, IOException {
         JadeTemplate template = new JadeTemplate();
 
-        Parser parser = new Parser(name, templateLoader);
+        Parser parser = new Parser(name, templateLoader, languageCode, originalToTranslated);
         Node root = parser.parse();
         template.setTemplateLoader(templateLoader);
         template.setRootNode(root);
