@@ -11,8 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.neuland.jade4j.exceptions.JadeCompilerException;
 import de.neuland.jade4j.filter.Filter;
 import de.neuland.jade4j.parser.node.MixinNode;
+import de.neuland.jade4j.parser.node.Node;
+import de.neuland.jade4j.template.JadeTemplate;
 
 public class JadeModel implements Map<String, Object> {
 
@@ -21,6 +24,10 @@ public class JadeModel implements Map<String, Object> {
 	private Deque<Map<String, Object>> scopes = new LinkedList<Map<String, Object>>();
 	private Map<String, MixinNode> mixins = new HashMap<String, MixinNode>();
 	private Map<String, Filter> filter = new HashMap<String, Filter>();
+
+	// to detect infinite loop
+	private Map<String, Integer> visited = new HashMap<String, Integer>();
+	private Integer MAX_VISITED = 100;
 
 	public JadeModel(Map<String, Object> defaults) {
 		Map<String, Object> rootScope = new HashMap<String, Object>();
@@ -48,6 +55,16 @@ public class JadeModel implements Map<String, Object> {
 
 	public MixinNode getMixin(String name) {
 		return mixins.get(name);
+	}
+
+	public void visit(Node node, JadeTemplate template) {
+		String visitId = node.getFileName()+":"+node.getLineNumber();
+		Integer ct = visited.getOrDefault(visitId, 0) +1;
+		if (ct > MAX_VISITED) {
+			String error = "Potential infinite loop: "+visitId+" has been visited more then "+MAX_VISITED+" times!";
+			throw new JadeCompilerException(node, template.getTemplateLoader(), error);
+		}
+		visited.put(visitId, ct);
 	}
 
 	@Override

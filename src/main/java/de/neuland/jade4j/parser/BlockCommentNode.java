@@ -9,6 +9,7 @@ public class BlockCommentNode extends CommentNode {
 
 	@Override
 	public void execute(IndentWriter writer, JadeModel model, JadeTemplate template) throws JadeCompilerException {
+		model.visit(this, template);
 		if (!isBuffered()) {
 			return;
 		}

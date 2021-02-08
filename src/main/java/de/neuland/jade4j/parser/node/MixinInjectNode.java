@@ -16,6 +16,7 @@ public class MixinInjectNode extends AttributedNode {
 
 	@Override
 	public void execute(IndentWriter writer, JadeModel model, JadeTemplate template) throws JadeCompilerException {
+		model.visit(this, template);
 		MixinNode mixin = model.getMixin(getName());
 		if (mixin == null) {
 			throw new JadeCompilerException(this, template.getTemplateLoader(), "mixin " + getName() + " is not defined");

@@ -16,6 +16,7 @@ public class ConditionalNode extends Node {
 
 	@Override
 	public void execute(IndentWriter writer, JadeModel model, JadeTemplate template) throws JadeCompilerException {
+		model.visit(this, template);
 		for (IfConditionNode conditionNode : this.conditions) {
 			try {
 				if (conditionNode.isDefault() || checkCondition(model, conditionNode.getValue()) ^ conditionNode.isInverse()) {
