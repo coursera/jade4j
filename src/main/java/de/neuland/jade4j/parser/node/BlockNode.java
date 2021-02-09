@@ -12,6 +12,7 @@ public class BlockNode extends Node {
 	private String mode;
 
 	public void execute(IndentWriter writer, JadeModel model, JadeTemplate template) throws JadeCompilerException {
+		model.visit(this, template);
 		for (Node node : getNodes()) {
 			node.execute(writer, model, template);
 		}

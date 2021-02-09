@@ -56,6 +56,7 @@ public class TagNode extends AttributedNode {
 
     @Override
     public void execute(IndentWriter writer, JadeModel model, JadeTemplate template) throws JadeCompilerException {
+        model.visit(this, template);
         writer.newline();
         writer.append("<");
         writer.append(name);

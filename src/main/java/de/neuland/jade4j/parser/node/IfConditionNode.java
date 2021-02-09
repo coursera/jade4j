@@ -17,6 +17,7 @@ public class IfConditionNode extends Node {
 
 	@Override
 	public void execute(IndentWriter writer, JadeModel model, JadeTemplate template) throws JadeCompilerException {
+		model.visit(this, template);
 		block.execute(writer, model, template);
 	}
 
